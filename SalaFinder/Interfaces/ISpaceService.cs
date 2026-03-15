@@ -14,6 +14,6 @@ namespace SalaFinder.Interfaces
 
         Task<bool> ChangeStatus(Guid id, bool isActive);
 
-        Task<List<Space>> Filter(string type, int capacity, string building);
+        Task<List<Space>> Filter(string type, int capacity, string building, string resource);
     }
 }
