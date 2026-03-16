@@ -42,11 +42,11 @@ public class ReservationService : IReservationService
         if (!space.allowedPrograms.Contains(userProgram))
             throw new Exception("Tu programa no tiene acceso a este espacio");
 
-        var conflict = await CheckConflict(reservation.spaceId,reservation.date,reservation.startTime,reservation.endTime);
+        var conflict = await CheckConflict(reservation.spaceId, reservation.date, reservation.startTime, reservation.endTime);
 
         if (conflict)
         {
-            var alternatives = await GetAlternativeSlots(reservation.spaceId,reservation.date,reservation.startTime,reservation.endTime);
+            var alternatives = await GetAlternativeSlots(reservation.spaceId, reservation.date, reservation.startTime, reservation.endTime);
 
             throw new Exception($"Conflicto de tiempo detectado. Horarios alternativos disponibles: {string.Join(" | ", alternatives)}");
         }
@@ -58,9 +58,14 @@ public class ReservationService : IReservationService
 
         _context.Reservations.Add(reservation);
         await _context.SaveChangesAsync();
+<<<<<<< HEAD
+        await _auditService.LogAction(reservation.userId, "Create Reservation", reservation.id_reservation.ToString()
+    );
+=======
 
         await _auditService.LogAction(reservation.userId,"Create Reservation",reservation.id_reservation.ToString());
 
+>>>>>>> 811595553d0d07539c99155c3ae2a65b852aa859
         return reservation;
     }
 

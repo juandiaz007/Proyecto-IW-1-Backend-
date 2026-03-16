@@ -22,6 +22,7 @@ namespace SalaFinder.Controllers
             return View();
         }
 
+
         [HttpGet]
         [Authorize(Roles = "Admin,Staff")]
         public async Task<IActionResult> GetAll()
@@ -29,6 +30,7 @@ namespace SalaFinder.Controllers
             var reservations = await _reservationService.GetAll();
             return Ok(reservations);
         }
+
 
         [HttpGet("{id}")]
         [Authorize]
@@ -78,7 +80,7 @@ namespace SalaFinder.Controllers
             return Ok("Reservation approved");
         }
 
-         [HttpPut("reject/{id}")]
+        [HttpPut("reject/{id}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Reject(Guid id)
         {

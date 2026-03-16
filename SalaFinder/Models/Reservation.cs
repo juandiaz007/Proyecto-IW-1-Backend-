@@ -30,5 +30,7 @@ namespace SalaFinder.Models
         public int attendeeCount { get; set; }
 
         public string status { get; set; }
+
+        
     }
 }
