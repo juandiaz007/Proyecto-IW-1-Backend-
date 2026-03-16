@@ -9,7 +9,7 @@ namespace SalaFinder.Models
         public Guid id_reservation { get; set; } = Guid.NewGuid();
 
         [ForeignKey("Space")]
-        public Guid spaceId { get; set; } 
+        public string spaceId { get; set; } 
 
         [ForeignKey("User")]
         public string userId { get; set; } 
@@ -25,5 +25,7 @@ namespace SalaFinder.Models
         public int attendeeCount { get; set; }
 
         public string status { get; set; }
+
+        
     }
 }
