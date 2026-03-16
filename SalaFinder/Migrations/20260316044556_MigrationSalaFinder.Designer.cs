@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SalaFinder.DAO;
 
@@ -11,9 +12,11 @@ using SalaFinder.DAO;
 namespace SalaFinder.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260316044556_MigrationSalaFinder")]
+    partial class MigrationSalaFinder
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -239,11 +242,9 @@ namespace SalaFinder.Migrations
 
                     b.Property<string>("userId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("id_log");
-
-                    b.HasIndex("userId");
 
                     b.ToTable("AuditLogs");
                 });
@@ -262,10 +263,9 @@ namespace SalaFinder.Migrations
 
                     b.Property<string>("userId")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("id");
-
-                    b.HasIndex("userId");
 
                     b.ToTable("NoShows");
                 });
@@ -301,12 +301,9 @@ namespace SalaFinder.Migrations
 
                     b.Property<string>("userId")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("id_reservation");
-
-                    b.HasIndex("spaceId");
-
-                    b.HasIndex("userId");
 
                     b.ToTable("Reservations");
                 });
@@ -400,47 +397,6 @@ namespace SalaFinder.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("SalaFinder.Models.AuditLog", b =>
-                {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "User")
-                        .WithMany()
-                        .HasForeignKey("userId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("SalaFinder.Models.NoShow", b =>
-                {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "User")
-                        .WithMany()
-                        .HasForeignKey("userId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("SalaFinder.Models.Reservation", b =>
-                {
-                    b.HasOne("SalaFinder.Models.Space", "Space")
-                        .WithMany()
-                        .HasForeignKey("spaceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "User")
-                        .WithMany()
-                        .HasForeignKey("userId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Space");
-
-                    b.Navigation("User");
                 });
 #pragma warning restore 612, 618
         }

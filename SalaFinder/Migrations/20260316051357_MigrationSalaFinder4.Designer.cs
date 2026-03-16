@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SalaFinder.DAO;
 
@@ -11,9 +12,11 @@ using SalaFinder.DAO;
 namespace SalaFinder.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260316051357_MigrationSalaFinder4")]
+    partial class MigrationSalaFinder4
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -262,6 +265,7 @@ namespace SalaFinder.Migrations
 
                     b.Property<string>("userId")
                         .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("id");
 
@@ -301,6 +305,7 @@ namespace SalaFinder.Migrations
 
                     b.Property<string>("userId")
                         .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("id_reservation");
 
