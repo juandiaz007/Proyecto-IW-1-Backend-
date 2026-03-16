@@ -15,11 +15,7 @@ namespace ApiConciertos.Services
             private readonly RoleManager<IdentityRole> _roleManager;
             private readonly IConfiguration _configuration;
 
-            public AuthService(
-                UserManager<IdentityUser> userManager,
-                RoleManager<IdentityRole> roleManager,
-                IConfiguration configuration
-                )
+            public AuthService(UserManager<IdentityUser> userManager,RoleManager<IdentityRole> roleManager,IConfiguration configuration)
             {
                 _userManager = userManager;
                 _roleManager = roleManager;
@@ -73,18 +69,10 @@ namespace ApiConciertos.Services
                     authClaims.Add(new Claim(ClaimTypes.Role, role));
                 }
 
-                var authFirmaKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
-                    _configuration["Jwt:Key"]!));
+                var authFirmaKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));
 
 
-                var token = new JwtSecurityToken(
-                    issuer: _configuration["Jwt:Issuer"],
-                    audience: _configuration["Jwt:Audience"],
-                    expires: DateTime.Now.AddHours(3),
-                    claims: authClaims,
-                    signingCredentials: new SigningCredentials(
-                        authFirmaKey, SecurityAlgorithms.HmacSha256)
-                    );
+                var token = new JwtSecurityToken(issuer: _configuration["Jwt:Issuer"],audience: _configuration["Jwt:Audience"],expires: DateTime.Now.AddHours(3), claims: authClaims,signingCredentials: new SigningCredentials( authFirmaKey, SecurityAlgorithms.HmacSha256));
 
                 return new JwtSecurityTokenHandler().WriteToken(token);
             }
