@@ -8,11 +8,13 @@ public class ReservationService : IReservationService
 {
     private readonly ApplicationDbContext _context;
     private readonly IAuditService _auditService;
+    private readonly INoShowService _noShowService;
 
-    public ReservationService(ApplicationDbContext context, IAuditService auditService)
+    public ReservationService(ApplicationDbContext context, IAuditService auditService, INoShowService noShowService)
     {
         _context = context;
         _auditService = auditService;
+        _noShowService = noShowService;
     }
     public async Task<Reservation?> GetById(Guid id)
     {
@@ -25,6 +27,13 @@ public class ReservationService : IReservationService
 
     public async Task<Reservation> Create(Reservation reservation, string userProgram)
     {
+        if (reservation.endTime <= reservation.startTime)
+            throw new Exception("La hora de fin debe ser mayor que la hora de inicio");
+
+        var isBlocked = await _noShowService.IsUserBlocked(reservation.userId);
+        if (isBlocked)
+            throw new Exception("El usuario está bloqueado temporalmente por NoShows");
+
         var space = await _context.Spaces.FindAsync(reservation.spaceId);
 
         if (space == null)
@@ -49,8 +58,14 @@ public class ReservationService : IReservationService
 
         _context.Reservations.Add(reservation);
         await _context.SaveChangesAsync();
+<<<<<<< HEAD
         await _auditService.LogAction(reservation.userId, "Create Reservation", reservation.id_reservation.ToString()
     );
+=======
+
+        await _auditService.LogAction(reservation.userId,"Create Reservation",reservation.id_reservation.ToString());
+
+>>>>>>> 811595553d0d07539c99155c3ae2a65b852aa859
         return reservation;
     }
 
