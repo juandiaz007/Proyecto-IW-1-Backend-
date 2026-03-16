@@ -22,7 +22,6 @@ namespace SalaFinder.Controllers
             return View();
         }
 
-        // Obtener todas las reservas
         [HttpGet]
         [Authorize(Roles = "Admin,Staff")]
         public async Task<IActionResult> GetAll()
@@ -31,7 +30,6 @@ namespace SalaFinder.Controllers
             return Ok(reservations);
         }
 
-        // Obtener reserva por id
         [HttpGet("{id}")]
         [Authorize]
         public async Task<IActionResult> GetById(Guid id)
@@ -44,7 +42,6 @@ namespace SalaFinder.Controllers
             return Ok(reservation);
         }
 
-        // Crear reserva
         [HttpPost]
         [Authorize(Roles = "Student,Staff")]
         public async Task<IActionResult> Create([FromBody] ReservationDTO dto)
@@ -67,7 +64,6 @@ namespace SalaFinder.Controllers
             return Ok(result);
         }
 
-        // Aprobar reserva
         [HttpPut("approve/{id}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Approve(Guid id)
@@ -82,8 +78,7 @@ namespace SalaFinder.Controllers
             return Ok("Reservation approved");
         }
 
-        // Rechazar reserva
-        [HttpPut("reject/{id}")]
+         [HttpPut("reject/{id}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Reject(Guid id)
         {
@@ -97,7 +92,6 @@ namespace SalaFinder.Controllers
             return Ok("Reservation rejected");
         }
 
-        // Cancelar reserva
         [HttpPut("cancel/{id}")]
         [Authorize]
         public async Task<IActionResult> Cancel(Guid id)
