@@ -21,5 +21,8 @@ namespace SalaFinder.Models.DTOs
 
         [Required]
         public int attendeeCount { get; set; }
+
+        [Required]
+        public string userProgram { get; set; }
     }
 }

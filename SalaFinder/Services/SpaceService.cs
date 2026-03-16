@@ -7,10 +7,12 @@ using Microsoft.EntityFrameworkCore;
 public class SpaceService : ISpaceService
 {
     private readonly ApplicationDbContext _context;
+    private readonly IAuditService _auditService;
 
-    public SpaceService(ApplicationDbContext context)
+    public SpaceService(ApplicationDbContext context, IAuditService auditService)
     {
         _context = context;
+        _auditService = auditService;
     }
 
     public async Task<List<Space>> GetAll()

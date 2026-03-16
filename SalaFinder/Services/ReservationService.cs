@@ -7,10 +7,12 @@ using Microsoft.EntityFrameworkCore;
 public class ReservationService : IReservationService
 {
     private readonly ApplicationDbContext _context;
+    private readonly IAuditService _auditService;
 
-    public ReservationService(ApplicationDbContext context)
+    public ReservationService(ApplicationDbContext context, IAuditService auditService)
     {
         _context = context;
+        _auditService = auditService;
     }
     public async Task<Reservation?> GetById(Guid id)
     {
@@ -34,7 +36,11 @@ public class ReservationService : IReservationService
         var conflict = await CheckConflict(reservation.spaceId,reservation.date,reservation.startTime,reservation.endTime);
 
         if (conflict)
-            throw new Exception("Conflicto de tiempo detectado");
+        {
+            var alternatives = await GetAlternativeSlots(reservation.spaceId,reservation.date,reservation.startTime,reservation.endTime);
+
+            throw new Exception($"Conflicto de tiempo detectado. Horarios alternativos disponibles: {string.Join(" | ", alternatives)}");
+        }
 
         if (space.requiresApproval)
             reservation.status = "Pending";
@@ -43,7 +49,8 @@ public class ReservationService : IReservationService
 
         _context.Reservations.Add(reservation);
         await _context.SaveChangesAsync();
-
+        await _auditService.LogAction(reservation.userId,"Create Reservation",reservation.id_reservation.ToString()
+    );
         return reservation;
     }
 
@@ -52,7 +59,7 @@ public class ReservationService : IReservationService
         return await _context.Reservations.Where(r => r.spaceId == spaceId && r.date == date && r.status == "Approved" && start < r.endTime && end > r.startTime).AnyAsync();
     }
 
-    public async Task<bool> Approve(Guid reservationId)
+    public async Task<bool> Approve(Guid reservationId,string adminId)
     {
         var reservation = await _context.Reservations.FindAsync(reservationId);
 
@@ -62,11 +69,12 @@ public class ReservationService : IReservationService
         reservation.status = "Approved";
 
         await _context.SaveChangesAsync();
+        await _auditService.LogAction(adminId,"Approve Reservation",reservationId.ToString());
 
         return true;
     }
 
-    public async Task<bool> Reject(Guid reservationId)
+    public async Task<bool> Reject(Guid reservationId, string adminId)
     {
         var reservation = await _context.Reservations.FindAsync(reservationId);
 
@@ -76,10 +84,12 @@ public class ReservationService : IReservationService
         reservation.status = "Rejected";
 
         await _context.SaveChangesAsync();
+        await _auditService.LogAction(adminId, "Reject Reservation", reservationId.ToString());
+
 
         return true;
     }
-    public async Task<bool> Cancel(Guid reservationId)
+    public async Task<bool> Cancel(Guid reservationId, string adminId)
     {
         var reservation = await _context.Reservations.FindAsync(reservationId);
 
@@ -89,7 +99,30 @@ public class ReservationService : IReservationService
         reservation.status = "Cancelled";
 
         await _context.SaveChangesAsync();
+        await _auditService.LogAction(adminId, "Cancel Reservation", reservationId.ToString());
+
 
         return true;
+    }
+    public async Task<List<(TimeSpan start, TimeSpan end)>> GetAlternativeSlots(Guid spaceId,DateTime date,TimeSpan startTime,TimeSpan endTime)
+    {
+        var alternatives = new List<(TimeSpan, TimeSpan)>();
+
+        var duration = endTime - startTime;
+
+        var current = startTime.Add(TimeSpan.FromHours(1));
+
+        for (int i = 0; i < 3; i++)
+        {
+            var newEnd = current + duration;
+
+            var conflict = await CheckConflict(spaceId, date, current, newEnd);
+
+            if (!conflict)alternatives.Add((current, newEnd));
+
+            current = current.Add(TimeSpan.FromHours(1));
+        }
+
+        return alternatives;
     }
 }

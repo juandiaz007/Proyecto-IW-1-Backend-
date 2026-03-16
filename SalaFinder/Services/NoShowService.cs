@@ -15,8 +15,7 @@ public class NoShowService : INoShowService
 
     public async Task<bool> IsUserBlocked(string userId)
     {
-        var record = await _context.NoShows
-            .FirstOrDefaultAsync(n => n.userId == userId);
+        var record = await _context.NoShows.FirstOrDefaultAsync(n => n.userId == userId);
 
         if (record == null)
             return false;
@@ -26,8 +25,7 @@ public class NoShowService : INoShowService
 
     public async Task<NoShow> RegisterNoShow(string userId)
     {
-        var record = await _context.NoShows
-            .FirstOrDefaultAsync(n => n.userId == userId);
+        var record = await _context.NoShows.FirstOrDefaultAsync(n => n.userId == userId);
 
         if (record == null)
         {
@@ -55,8 +53,7 @@ public class NoShowService : INoShowService
     }
     public async Task ResetNoShows(string userId)
     {
-        var record = await _context.NoShows
-            .FirstOrDefaultAsync(n => n.userId == userId);
+        var record = await _context.NoShows.FirstOrDefaultAsync(n => n.userId == userId);
 
         if (record != null)
         {
